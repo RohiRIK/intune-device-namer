@@ -170,7 +170,9 @@ describe("wizard safeguards", () => {
       expect(summary).toContain("0 submitted · 1 skipped");
       expect(process.exitCode).toBe(1);
     } finally {
-      process.exitCode = previousExitCode;
+      // `?? 0`, not `undefined`: assigning undefined to process.exitCode is a no-op in Bun,
+      // so the whole suite would inherit exit code 1 from this test.
+      process.exitCode = previousExitCode ?? 0;
       await rm(directory, { recursive: true, force: true });
     }
   });
