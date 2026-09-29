@@ -1,0 +1,30 @@
+{
+  "name": "intune-device-namer",
+  "version": "1.0.0",
+  "description": "Bun CLI to preview, plan and reconcile Microsoft Intune device names via Microsoft Graph, with a guided interactive wizard and guarded beta apply.",
+  "license": "MIT",
+  "keywords": ["intune", "microsoft-graph", "endpoint-manager", "device-naming", "bun", "powershell"],
+  "type": "module",
+  "bin": {
+    "intune-device-namer": "./src/cli.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RohiRIK/intune-device-namer.git"
+  },
+  "bugs": { "url": "https://github.com/RohiRIK/intune-device-namer/issues" },
+  "homepage": "https://github.com/RohiRIK/intune-device-namer#readme",
+  "scripts": {
+    "build": "bun build ./src/cli.ts --target=bun --outdir=dist",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "help": "bun run src/cli.ts --help"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "typescript": "^5.9.0"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1"
+  }
+}

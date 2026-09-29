@@ -1,0 +1,18 @@
+# Quick start
+
+1. Install Bun 1.3+ and run `bun install` in this directory.
+   On Windows PowerShell, start the guided preview with `.\Invoke-IntuneDeviceNamer.ps1`. Run `.\Invoke-IntuneDeviceNamer.ps1 -CliArguments @('--enable-beta')` only if you want it to offer a final **Confirm / Cancel** choice after saving and reviewing a plan.
+   On macOS/Linux, start the guided preview with `sh ./Invoke-IntuneDeviceNamer.sh`; `sh ./Invoke-IntuneDeviceNamer.sh --enable-beta` offers the same guarded choice.
+   When asked to save a plan, press Enter to create `plans/pilot.plan.json` under the CLI project (or the next available numbered filename). A bare `--plan-file pilot.plan.json` finds it there, even if you launch the wrapper from another directory.
+2. For the wizard, install PowerShell 7 and `Microsoft.Graph.Authentication`. It runs interactive `Connect-MgGraph` automatically; sign in when the browser opens, then search for a device by name. The platform is detected automatically. For scripted `--auth app`/`--auth device` calls instead, register an Entra app and configure `.env` as described in [README.md](README.md#authentication-and-permissions).
+3. Check a name offline: `bun run src/cli.ts validate --platform macOS --serial C02ABC123456 --template platform-serial`.
+   For assigned-user naming: `bun run src/cli.ts validate --platform macOS --serial C02ABC123456 --username alex.smith@contoso.com --template platform-username-serial`. The wizard lists all placeholders at the Custom pattern prompt.
+   For department naming without company: `bun run src/cli.ts validate --platform macOS --serial C02ABC123456 --username alex.smith@contoso.com --department Finance --template department-platform-username-serial` → `FI-MAC-ALEX-SMITH-C02ABC123456`.
+4. Preview your managed devices: `bun run src/cli.ts plan --platform macOS --out pilot.plan.json | jq '.items[] | {currentName, proposedName, action, reason}'`.
+   For **all Intune-managed devices in one Entra security group**, choose **Entra device group** in the wizard, search by group name, and optionally filter by platform. Scripted alternative: `bun run src/cli.ts plan --group-id '<group-GUID>' --platform macOS --auth app --out group.plan.json`.
+   To target just one device with an exact name: `bun run src/cli.ts plan --device-id <Intune-managed-device-GUID> --name MAC-FINANCE-01 --out single.plan.json` (platform detected from the device). Preview the saved file offline: `bun run src/cli.ts apply --plan-file single.plan.json --dry-run`.
+5. After reviewing the plan and granting privileged Graph permission, submit up to five eligible actions: `bun run src/cli.ts apply --plan-file pilot.plan.json --confirm --enable-beta --limit 5`.
+   To submit a **previously saved one-device wizard plan** with the same interactive PowerShell sign-in: `sh ./Invoke-IntuneDeviceNamer.sh apply --plan-file pilot-4.plan.json --auth powershell --confirm --enable-beta --limit 1`. This checks the signed-in tenant and device snapshot before submitting anything. Substitute your own plan filename.
+6. Re-run `plan` after devices check in. For Macs enrolled without ADE, generate and deploy the local-hostname script: `bun run src/cli.ts generate-macos-script --out mac-rename.sh`.
+
+`plan` is read-only; `apply` submits an Intune Device name action only for documented eligible devices. `submitted` means Graph accepted the action, while `skipped` means no rename was sent; see its reason. Entra drift is reported, not changed. See [README.md](README.md) for platform behavior, saved-plan status, existing-device effects, non-Autopilot enrollment and script deployment.
