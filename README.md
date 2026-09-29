@@ -114,7 +114,7 @@ sh ./Invoke-IntuneDeviceNamer.sh  # wizard: PowerShell interactive sign-in, prev
 
 For scriptable `--auth app` or `--auth device` commands, copy `.env.example` to `.env` and configure `TENANT_ID` and `CLIENT_ID` (plus `CLIENT_SECRET` for app mode). No `.env` is needed for the PowerShell-interactive wizard or `apply --auth powershell`.
 
-New here? Read [How it works](#how-it-works) first — it explains which of the four device names this tool actually changes, and the guards between a preview and a real rename.
+New here? Read [How it works](#how-it-works) first — it explains which of the four device names this tool actually changes, and the guards between a preview and a real rename. For the shortest path, see [QUICKSTART.md](QUICKSTART.md).
 
 ### Interactive wizard (including PowerShell)
 
